@@ -50,7 +50,7 @@ def create_recognition_data(user: CustomUser) -> FaceRecognition:
     return face
 
 
-def create_user(validated_data: Dict) -> CustomUser:
+def create_user(**validated_data: Dict) -> CustomUser:
     password: str = get(validated_data, 'password')
     user = CustomUser(**validated_data)
     user.set_password(password)
