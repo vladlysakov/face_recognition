@@ -1,6 +1,6 @@
 from django.core.validators import RegexValidator
 
-from recognition.face.common.regex.constants import Phone, StudentCard
+from face.common.regex.constants import Phone, StudentCard
 
 __all__ = ['PHONE', 'STUDENT_CARD']
 

@@ -1,6 +1,6 @@
 from django import forms
 
-from recognition.face.common.regex.validators import STUDENT_CARD, PHONE
+from face.common.regex.validators import STUDENT_CARD, PHONE
 
 __all__ = ['User']
 
