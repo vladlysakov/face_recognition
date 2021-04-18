@@ -1,12 +1,16 @@
 from pathlib import Path
 
+from face.common.constants import JWTTokenVariables, AllowedHostsVariables
+from face.configurations.database import DatabaseConfig
+from face.configurations.keys import SecretKeyConfig
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'h*qbjz(^7$k%1syw8pts^kjw7q82$n8hc6%)xo8efh0_ccmwy_'
+SECRET_KEY = SecretKeyConfig.KEY
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS = AllowedHostsVariables.ALL
 CORS_ALLOW_ALL_ORIGINS = True
 # CORS_ALLOWED_ORIGINS = []
 
@@ -49,9 +53,38 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50,
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'face.features.security.token.drf_token.authentication.ExpiringTokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'face.features.security.token.drf.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',)
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': JWTTokenVariables.ACCESS_TOKEN_LIFETIME,
+    'REFRESH_TOKEN_LIFETIME': JWTTokenVariables.REFRESH_TOKEN_LIFETIME,
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': False,
+
+    'ALGORITHM': JWTTokenVariables.ALGORITHM,
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+
+    'AUTH_HEADER_TYPES': JWTTokenVariables.AUTH_HEADER_TYPES,
+    'AUTH_HEADER_NAME': JWTTokenVariables.AUTH_HEADER_NAME,
+    'USER_ID_FIELD': JWTTokenVariables.USER_ID_FIELD,
+    'USER_ID_CLAIM': JWTTokenVariables.USER_ID_CLAIM,
+
+    'AUTH_TOKEN_CLASSES': JWTTokenVariables.AUTH_TOKEN_CLASSES,
+    'TOKEN_TYPE_CLAIM': JWTTokenVariables.TOKEN_TYPE_CLAIM,
+
+    'JTI_CLAIM': JWTTokenVariables.JTI_CLAIM,
+
+    'SLIDING_TOKEN_REFRESH_EXP_CLAIM': JWTTokenVariables.SLIDING_TOKEN_REFRESH_EXP_CLAIM,
+    'SLIDING_TOKEN_LIFETIME': JWTTokenVariables.SLIDING_TOKEN_LIFETIME,
+    'SLIDING_TOKEN_REFRESH_LIFETIME': JWTTokenVariables.SLIDING_TOKEN_REFRESH_LIFETIME,
 }
 
 TEMPLATES = [
@@ -74,19 +107,19 @@ WSGI_APPLICATION = 'recognition.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'face_recognition',
-        'USER': 'postgres',
-        'PASSWORD': '1',
-        'HOST': 'localhost',
-        'PORT': 5432,
+        'ENGINE': DatabaseConfig.ENGINE,
+        'NAME': DatabaseConfig.NAME,
+        'USER': DatabaseConfig.USER,
+        'PASSWORD': DatabaseConfig.PASSWORD,
+        'HOST': DatabaseConfig.HOST,
+        'PORT': DatabaseConfig.PORT,
     }
 }
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-AUTH_USER_MODEL = 'face.CustomUser'
+AUTH_USER_MODEL = DatabaseConfig.AUTH_USER_MODEL
 
 AUTH_PASSWORD_VALIDATORS = [
     {

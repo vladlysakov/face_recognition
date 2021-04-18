@@ -1,11 +1,12 @@
 from datetime import datetime
 
+from pydash import get
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
 
-from face.features.security.token.drf_token import repository
+from face.features.security.token.drf import repository
 from face.features.security.utils import is_token_expired
-from face.models import CustomUser
+from face.features.user.repository.models import CustomUser
 
 
 def get_token(user: CustomUser) -> Token:
@@ -56,4 +57,4 @@ def recreate(token: Token) -> Token:
 
 
 def get_user(token: Token) -> CustomUser:
-    return token.user
+    return get(token, 'user')

@@ -4,7 +4,9 @@ from django.utils import timezone
 from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 
 from face.common.constants import TokenVariables
-from face.models import CustomUser
+from face.features.security.token.drf import service as drf_service
+from face.features.security.token.jwt import service as jwt_service
+from face.features.user.repository.models import CustomUser
 
 
 def validate_token(token):
@@ -19,7 +21,7 @@ def validate_token(token):
 
 def expires_in(token):
     time_elapsed = timezone.now() - token.created
-    left_time = timedelta(seconds=TokenVariables.TOKEN_EXPIRED_AFTER_SECONDS) - time_elapsed
+    left_time = TokenVariables.ACCESS_TOKEN_LIFETIME - time_elapsed
 
     return left_time
 
@@ -31,6 +33,14 @@ def is_token_expired(token):
 def is_superuser(user: CustomUser):
     if not user:
         raise AuthenticationFailed()
-
     elif not user.is_superuser:
         raise PermissionDenied("Only admins can initiate auth flow.")
+
+
+def get_user(token):
+    user = drf_service.get_user(token)
+
+    if not user:
+        user = jwt_service.get_user(token)
+
+    return user

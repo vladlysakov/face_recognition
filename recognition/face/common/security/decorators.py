@@ -5,8 +5,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 
-from face.features.security.token.drf_token.service import get_user
-from face.features.security.utils import is_superuser
+from face.features.security.utils import get_user, is_superuser
 from face.models import CustomUser
 
 

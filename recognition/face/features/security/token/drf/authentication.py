@@ -1,11 +1,11 @@
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication as DRFTokenAuthentication
 from rest_framework.authtoken.models import Token
 
-from face.features.security.token.drf_token.service import get_token_verified
+from face.features.security.token.drf.service import get_token_verified
 from face.features.security.utils import validate_token
 
 
-class ExpiringTokenAuthentication(TokenAuthentication):
+class TokenAuthentication(DRFTokenAuthentication):
     keyword = 'Bearer'
 
     def authenticate_credentials(self, key):

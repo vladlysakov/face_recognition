@@ -1,8 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
-from face.features.recognition.service import create_recognition_data
-from face.features.user.service import create_user
-from face.models import CustomUser, FaceRecognition
+from face.features.user.logic import service
+from face.features.user.repository.models import CustomUser
 
 
 class UserSerializer(ModelSerializer):
@@ -24,13 +23,6 @@ class UserSerializer(ModelSerializer):
         ]
 
     def create(self, validated_data):
-        user = create_user(**validated_data)
-        create_recognition_data(user=user)
+        user = service.create_user(validated_data)
 
         return user
-
-
-class FaceRecognitionSerializer(ModelSerializer):
-    class Meta:
-        model = FaceRecognition
-        fields = '__all__'

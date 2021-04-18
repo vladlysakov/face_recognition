@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 
-from face.features.security.token.drf_token.authentication import ExpiringTokenAuthentication
+from face.features.recognition.serializers import FaceRecognitionSerializer
+from face.features.security.token.drf.authentication import TokenAuthentication
+from face.features.user.serializers import UserSerializer
 from face.models import CustomUser, FaceRecognition
-from face.serializers import UserSerializer, FaceRecognitionSerializer
 
 
 class AuthenticationMixin(ABC):
@@ -31,14 +33,14 @@ class AuthenticationMixin(ABC):
 
 
 class UserAuthenticationMixin(AuthenticationMixin):
-    authentication_classes = (ExpiringTokenAuthentication,)
+    authentication_classes = (JWTTokenUserAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
     queryset = CustomUser.objects.all()
 
 
 class RecognitionAuthenticationMixin(AuthenticationMixin):
-    authentication_classes = (ExpiringTokenAuthentication,)
+    authentication_classes = (JWTTokenUserAuthentication, TokenAuthentication,)
     permission_classes = (IsAdminUser, IsAuthenticated)
     serializer_class = FaceRecognitionSerializer
     queryset = FaceRecognition.objects.all()
