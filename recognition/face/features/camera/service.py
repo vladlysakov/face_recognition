@@ -1,8 +1,8 @@
 import cv2 as cv
 import face_recognition
 
-from ...common.exceptions import EncodingFaceException
-from ...decorators import WithRetry
+from face.common.exceptions import EncodingFaceException
+from face.decorators import WithRetry
 
 
 def get_image():

@@ -1,27 +1,7 @@
 from functools import wraps
 
-from django.contrib.auth import authenticate
 from face.common.constants import EnvironmentVariables
-from pydash import get
-from rest_framework.exceptions import AuthenticationFailed, APIException
-
-
-def custom_authenticate(method):
-    def wrapper(_, request, *args, **kwargs):
-        email = get(request, 'data.email')
-        password = get(request, 'data.password')
-
-        user = authenticate(request, username=email, password=password)
-
-        if not user:
-            raise AuthenticationFailed()
-
-        kwargs['user'] = user
-        result = method(_, request, *args, **kwargs)
-
-        return result
-
-    return wrapper
+from rest_framework.exceptions import APIException
 
 
 class WithRetry:
