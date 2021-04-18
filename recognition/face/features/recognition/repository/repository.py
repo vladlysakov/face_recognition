@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Dict
 
-from face.models import FaceRecognition, CustomUser
+from face.features.recognition.repository.models import FaceRecognition
+from face.features.user.repository.models import CustomUser
 
 
 def get_recognition_data(user_id: int):

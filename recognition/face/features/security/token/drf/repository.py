@@ -3,7 +3,7 @@ from typing import Tuple
 
 from rest_framework.authtoken.models import Token
 
-from face.models import CustomUser
+from face.features.user.repository.models import CustomUser
 
 
 def get_token(key: str) -> Token:

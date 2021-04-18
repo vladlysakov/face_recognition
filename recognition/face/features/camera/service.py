@@ -1,8 +1,8 @@
 import cv2 as cv
 import face_recognition
 
+from face.common.decorators import WithRetry
 from face.common.exceptions import EncodingFaceException
-from face.decorators import WithRetry
 
 
 def get_image():
@@ -24,9 +24,11 @@ def get_image():
 
         if k % 256 == 27:
             print("Escape hit, closing...")
+
             break
         elif k % 256 == 32:
             image = frame
+
             break
 
     cam.release()

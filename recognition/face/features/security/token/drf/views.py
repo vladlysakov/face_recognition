@@ -3,7 +3,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 
 from face.common.security.decorators import admin_authentication
-from face.features.security.token.drf_token.service import get_token
+from face.features.security.token.drf.service import get_token
 
 
 class ObtainExpiringAuthToken(ObtainAuthToken):

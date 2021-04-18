@@ -8,12 +8,13 @@ from rest_framework.exceptions import PermissionDenied
 
 from face.common.exceptions import RecognitionDataException
 from face.features.camera.service import get_face_from_camera
-from face.features.recognition import repository
-from face.models import CustomUser, FaceRecognition
+from face.features.recognition.repository import repository
+from face.features.recognition.repository.models import FaceRecognition
+from face.features.user.repository.models import CustomUser
 
 
 def face_recognition(user: CustomUser) -> CustomUser:
-    user_data = get_recognition_data_verified(user.pk)
+    user_data = get_recognition_data_verified(get(user, 'pk'))
     camera_data = get_face_from_camera()
 
     if authenticate_by_face(user_data.data, camera_data):
@@ -52,7 +53,7 @@ def create_recognition_data(user: CustomUser, time: datetime = None) -> FaceReco
 
 
 def create(user: CustomUser, data, last_recognition: datetime = None) -> FaceRecognition:
-    face = repository.create(user=user, data=data.tolist(), last_recognition=last_recognition)
+    face = repository.create(user=user, data=data, last_recognition=last_recognition)
 
     return face
 
