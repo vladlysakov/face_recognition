@@ -1,23 +1,27 @@
+import base64
+import io
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 
 import face_recognition as auth_tools
+import numpy as np
+from PIL import Image
 from django.utils import timezone
 from pydash import is_empty, head, get
 from rest_framework.exceptions import PermissionDenied
 
 from face.common.exceptions import RecognitionDataException
-from face.features.camera.service import get_face_from_camera
+from face.features.camera.service import get_face_from_camera, encoding
 from face.features.recognition.repository import repository
 from face.features.recognition.repository.models import FaceRecognition
 from face.features.user.repository.models import CustomUser
 
 
-def face_recognition(user: CustomUser) -> CustomUser:
+def face_recognition(user: CustomUser, data: str) -> CustomUser:
     user_data = get_recognition_data_verified(get(user, 'pk'))
-    camera_data = get_face_from_camera()
+    recognition_data = get_recognition_data_from_string(data)
 
-    if authenticate_by_face(user_data.data, camera_data):
+    if authenticate_by_face(user_data.data, recognition_data):
         return user
 
     raise PermissionDenied(detail=f'Face recognition failed. You are not {user.email}.')
@@ -71,3 +75,29 @@ def create_or_update(serializer, user: CustomUser):
             serializer.save()
 
     return face
+
+
+def verify_and_save_recognition_data(user: CustomUser, data: Optional[str] = None, time: datetime = None):
+    time = time if time else timezone.now()
+    recognition_data = get_recognition_data_from_string(data)
+
+    if recognition_data:
+        raise RecognitionDataException()
+
+    face = create(user=user, data=recognition_data.tolist(), last_recognition=time)
+    repository.save(face)
+
+    return face
+
+
+def get_recognition_data_from_string(recognition_data: str):
+    type_, value = recognition_data.split(',')
+    base64_decoded = base64.b64decode(value)
+
+    with io.BytesIO(base64_decoded) as chunk:
+        with Image.open(chunk) as image:
+            arr = np.array(image)
+
+    data = encoding(arr)
+
+    return data
